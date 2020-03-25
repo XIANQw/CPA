@@ -50,7 +50,7 @@ def draw_graph(graph, labels=None):
 	nx.draw_networkx_edges(graph, pos, width=1.0, alpha=0.5)
 	plt.axis('off')
 	# sauvegarder
-	plt.savefig("comunity_youtube.png")  
+	plt.savefig("graph.png")  
 	# nx.draw(graph)
 	plt.show()
 
@@ -95,16 +95,17 @@ if __name__ == "__main__":
 	graph = creat_graph(filename)
 	nodes = list(graph.nodes())
 	edges = list(nx.edges(graph))
-	# Step 1:give a unique label to each node in the network
-	labels = {node: node for node in nodes}
-	for i in range(0,3):
-		labels = LabelPropagation(graph, nodes,labels)		
-	#the numbers of communities obtained
-	set_labels = set(labels.values())
-	l_labels = list(labels.values())
-	nb_communities = len(set_labels)
-	print("the numbers of communities: ", nb_communities)
-	size_community = {x:l_labels.count(x) for x in l_labels}
-	print(size_community)
-	draw_graph(graph, labels)
+	for tour in range(1000):
+		# Step 1:give a unique label to each node in the network
+		labels = {node: node for node in nodes}
+		for i in range(0,3):
+			labels = LabelPropagation(graph, nodes,labels)		
+		#the numbers of communities obtained
+		set_labels = set(labels.values())
+		l_labels = list(labels.values())
+		nb_communities = len(set_labels)
+		print("tour={}, the numbers of communities: {}".format(tour, nb_communities))
+		# size_community = {x:l_labels.count(x) for x in l_labels}
+		# print(size_community)
+		# draw_graph(graph, labels)
 
