@@ -1,12 +1,17 @@
 #include "ex4.h"
 
 void ex4(Graph & g){
-    FILE * fichier = fopen("node_degree.txt","w");
-    if(fichier!=NULL){
-        printf("=========ex4 generate file node degree================\n");
-        fprintf(fichier,"#node    degree\n");
-        for(int i=0;i<g.degree.size();i++){
-                fprintf(fichier, "%ld         %d\n",g.origin[i], g.degree[i]);
+    printf("List edges:\n");
+    printf("size=%ld\n",g.edges.size());
+    printf("adjarray:\n");
+    printf("size=%ld\n", g.adjarray.size());
+    
+    printf("matrix:\n");
+    ulong matrix[g.n_nodes][g.n_nodes];
+    for(int i=0; i<g.adjarray.size(); i++){
+        for(int j=0; j<g.adjarray[i].size(); j++){
+            matrix[i][j] = 1;
+            matrix[j][i] = 1;
         }
     }
 }

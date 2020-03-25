@@ -1,4 +1,3 @@
 #include "../graph/graph.h"
-#include <fstream>
 
-void ex6();
+void ex6(ifstream & in);
