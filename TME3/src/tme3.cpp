@@ -1,9 +1,5 @@
 #include "graph.h"
 
-char target [] = "./data/alr21--dirLinks--enwiki-20071018.txt";
-char test []  = "./data/test";
-
-
 struct Pagerank{
 
     float a;
@@ -66,6 +62,8 @@ struct Pagerank{
 
 
 int main(){
+    char target [] = "./data/alr21--dirLinks--enwiki-20071018.txt";
+    char test []  = "./data/test";
     clock_t start, end;
     start = clock();
     float a = 0.15;
