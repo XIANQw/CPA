@@ -4,6 +4,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.awt.Point;
 
+
+/**
+ *  La structure de données Union-Find Set. Elle est utilisée pour 
+ * vérifier si ces deux points sont dans la même partie.
+ */
+
 public class UFSet {
 
     public HashMap<Point, Integer> pointId;
@@ -19,6 +25,11 @@ public class UFSet {
             root[i] = i;
         }
     }
+    /**
+     * La méthode find(Point p) permet de trouver à quelle partie le Point p appartient.
+     * En cherchant la racine de point, le chemin est compressé, cela permet de améliorer
+     * la complexité est O(logn) au pire, O(1) en moyenne.
+     */
 
     public int find(Point p) {
         int id = this.pointId.get(p);
@@ -35,6 +46,10 @@ public class UFSet {
         return rootP;
     }
 
+    /**
+     * Union(Point p1, Point p2) permet de fusioner deux partie de ces deux points 
+     * la complexité est O(logn) au pire, O(1) en moyenne.
+     */
     public void union(Point p, Point q) {
         int rootp = find(p), rootq = find(q);
         if (rootp == rootq)

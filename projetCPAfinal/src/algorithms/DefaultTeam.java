@@ -10,6 +10,12 @@ public class DefaultTeam {
 
 
     public Tree2D calculSteiner(ArrayList<Point> points, int edgeThreshold, ArrayList<Point> hitPoints) {
+        /**
+         * L'algo floyd remplit le tableau distance et paths, la complexité est O(n3).
+         * dis[u][v] est la plus petite distance entre Point u et Point v
+         * paths[u][v] est le point de successeur dans le plus court chemin de u à v.
+         * idents stocke les identifiants de point. 
+         */
         int[][] paths = new int[points.size()][points.size()];
         double[][] dis = new double[points.size()][points.size()];
         Floyd.floyd(paths, dis, points, edgeThreshold);
@@ -19,11 +25,20 @@ public class DefaultTeam {
             idents.put(points.get(i), i);
         }
         System.out.printf("1st kruskal, hitPoint=%d\n", hitPoints.size());
+
+        /**
+         * L'algo kruskal rend l'arbre couvrant minimal de S (hitPoitns).
+         */
         UFSet ufs = new UFSet(points);
         ArrayList<Edge> spanning = Kruskal.kruskal(hitPoints, ufs, idents, dis, paths);
         System.out.printf("spanning size=%d\n", spanning.size());
 
-        HashSet<Point> setPoint = new HashSet<Point>();
+        /** 
+         * Dès qu'on a obtenu l'arbre couvrant minimal de S,
+         * on remplace les arêtes de l'arbre couvrant de S par le plus court chemin de G.
+         * En plus ajouter les points qui sont sur le chemin dans la nouvelle liste de point H.
+        */
+        Set<Point> setPoint = new HashSet<Point>();
         for (Point p : hitPoints) {
             setPoint.add(p);
         }
@@ -39,8 +54,11 @@ public class DefaultTeam {
                 u = k;
             }
         }
-        ArrayList<Point> allPoint = new ArrayList<Point>(setPoint);
 
+        /**
+         * La deuxième fois de l'algo kruskal permet de construire l'arbre couvrant T' depuis H.
+        */
+        ArrayList<Point> allPoint = new ArrayList<Point>(setPoint);
         System.out.printf("2nd kruskal, points=%d\n", allPoint.size());
         ufs = new UFSet(allPoint);
         spanning = Kruskal.kruskal(allPoint, ufs, idents, dis, paths);
