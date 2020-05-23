@@ -54,7 +54,6 @@ public class DefaultTeam {
       if (rootp == rootq) return ;
       int idp = pointId.get(p), idq = pointId.get(q);
       this.root[rootp] = rootq;
-      count--;
     }
   }
 
