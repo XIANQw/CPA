@@ -38,7 +38,7 @@ public class DefaultTeam {
          * on remplace les arêtes de l'arbre couvrant de S par le plus court chemin de G.
          * En plus ajouter les points qui sont sur le chemin dans la nouvelle liste de point H.
         */
-        Set<Point> setPoint = new HashSet<Point>();
+        HashSet<Point> setPoint = new HashSet<Point>();
         for (Point p : hitPoints) {
             setPoint.add(p);
         }
