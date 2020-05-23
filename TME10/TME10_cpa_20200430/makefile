@@ -6,17 +6,17 @@ PACKAGE = algorithms
 TEST = test
 DOC = doc
 JAR = steiner
-DATA = Varoumas_benchmark
 SOURCE_FILES = $(wildcard $(SOURCE)/**/*.java $(SOURCE)/*.java)
 
 
-file: $(patsubst $(SOURCE)/%.java,$(TARGET)/%.class,$(SOURCE_FILES))
-
-$(TARGET)/%.class: $(SOURCE)/%.java
-	javac -sourcepath $(SOURCE) $^ -d $(TARGET)
+file:
+	@find . -name "*.java" > sourcefiles
+	javac -cp jars/* -s $(SOURCE)/ $^ -d $(TARGET)/ @sourcefiles
+	@rm sourcefiles 
 
 run: file
-	cd $(TARGET); java $(PACKAGE).Main
+	java -cp jars/supportGUI.jar:bin/ supportGUI.ShortestPathsViewer
+	@rm sourcefiles;
 
 clean:
 	rm -frv $(TARGET)/$(PACKAGE)
