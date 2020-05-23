@@ -3,13 +3,14 @@ package algorithms;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 
 public class DefaultTeam {
 
   class Edge {
     protected Point p, q;
 
-    protected Edge(Point p, Point q){
+    protected Edge(Point p, Point q) {
       this.p = p;
       this.q = q;
     }
@@ -20,64 +21,79 @@ public class DefaultTeam {
 
   }
 
-  class NameTag {
-    private ArrayList<Point> points;
-    private int[] tag;
-
-    protected NameTag(ArrayList<Point> points) {
-      this.points = new ArrayList<Point>(points);
-      tag = new int[points.size()];
-      for (int i = 0; i < points.size(); i++)
-        tag[i] = i;
+  class UFset{
+    public HashMap<Point, Integer> pointId;
+    public int[] root;
+    public int count; 
+    public UFset(ArrayList<Point>points){
+      pointId = new HashMap<Point, Integer>();
+      root = new int[points.size()];
+      count = points.size();
+      for(int i=0; i<points.size(); i++){
+        pointId.put(points.get(i), i);
+        root[i] = i;
+      }
+    }
+    public int find(Point p){
+      int id=this.pointId.get(p);
+      int rootP = root[id];
+      while(rootP != id){
+        id = rootP;
+        rootP=root[id];
+      }
+      while(root[id]!=id){
+        int father=root[id];
+        root[id]=rootP;
+        id=father;
+      }
+      return rootP;
     }
 
-    protected void reTag(int j, int k) {
-      for (int i = 0; i < tag.length; i++)
-        if (tag[i] == j)
-          tag[i] = k;
-    }
-
-    protected int tag(Point p) {
-      for (int i = 0; i < points.size(); i++)
-        if (p.equals(points.get(i)))
-          return tag[i];
-      return 0xBADC0DE;
+    public void union(Point p, Point q){
+      int rootp = find(p), rootq = find(q);
+      if (rootp == rootq) return ;
+      int idp = pointId.get(p), idq = pointId.get(q);
+      this.root[rootp] = rootq;
+      count--;
     }
   }
 
   public Tree2D calculSteiner(ArrayList<Point> points) {
-    // KRUSKAL ALGORITHM, NOT OPTIMAL FOR STEINER!
     ArrayList<Edge> edges = new ArrayList<Edge>();
-    for (int i=0; i<points.size(); i++) {
-      for (int j=i+1; j<points.size(); j++) {
-        if (points.get(i).equals(points.get(j))) continue;
+    for (int i = 0; i < points.size(); i++) {
+      for (int j = i + 1; j < points.size(); j++) {
+        if (points.get(i).equals(points.get(j)))
+          continue;
         edges.add(new Edge(points.get(i), points.get(j)));
       }
     }
 
-    edges.sort(new Comparator<Edge>(){
+    edges.sort(new Comparator<Edge>() {
       @Override
-      public int compare(Edge e1, Edge e2){
-        return (int)(e1.distance()-e2.distance());
+      public int compare(Edge e1, Edge e2) {
+        double d1 = e1.distance(), d2 = e2.distance(); 
+        if(d1 < d2) return -1;
+        else if (d1 > d2) return 1;
+        else return 0;
       }
     });
 
     ArrayList<Edge> kruskal = new ArrayList<Edge>();
-    NameTag forest = new NameTag(points);
-    for (Edge current : edges) {
-      if (forest.tag(current.p) != forest.tag(current.q)) {
+    UFset ufs = new UFset(points);
+    for(Edge current : edges){
+      int tagp = ufs.find(current.p), tagq = ufs.find(current.q);
+      if(tagp != tagq) {
         kruskal.add(current);
-        forest.reTag(forest.tag(current.p), forest.tag(current.q));
+        ufs.union(current.p, current.q);
       }
     }
     return edgesToTree(kruskal, kruskal.get(0).p);
   }
 
-  
   private Tree2D edgesToTree(ArrayList<Edge> edges, Point root) {
     ArrayList<Edge> remainder = new ArrayList<Edge>();
     ArrayList<Point> subTreeRoots = new ArrayList<Point>();
-    for (Edge current: edges) {
+    for (Edge current : edges) {
       if (current.p.equals(root)) {
         subTreeRoots.add(current.q);
       } else {
@@ -93,9 +109,7 @@ public class DefaultTeam {
     for (Point subTreeRoot : subTreeRoots) {
       subTrees.add(edgesToTree(new ArrayList<Edge>(remainder), subTreeRoot));
     }
-
     return new Tree2D(root, subTrees);
   }
-
 
 }
