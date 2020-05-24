@@ -15,13 +15,11 @@ public class Kruskal {
         ArrayList<Edge> edges = new ArrayList<Edge>();
         for (Point p : points) {
             for (Point q : points) {
-                if (!p.equals(q)) {
-                    Edge a = new Edge(p, q);
-                    edges.add(a);
+                if (!p.equals(q) && (int)(dis[idents.get(p)][idents.get(q)]) != 99999999 ) {
+                    edges.add(new Edge(p, q));
                 }
             }
         }
-
         /**
          *  Trier la liste des arêtes en ordre de la distance croissante. 
          *  La complexité est O(nlogn)
@@ -49,5 +47,23 @@ public class Kruskal {
             }
         }
         return span;
+    }
+
+    public static ArrayList<Edge> kruskalBudget(ArrayList<Point> points, UFSet ufs, HashMap<Point, Integer> idents, double[][] dis,
+    int[][] paths, int budget) {
+        ArrayList<Edge> edges = new ArrayList<Edge>();
+        if(points.size()==0) return edges;
+        
+        Point s=points.get(0);
+        for(Point p:points){
+            for(Point q:points){
+                if(!p.equals(q)){
+                    edges.add(new Edge(p, q));
+                }
+            }
+        }
+
+
+        return edges;
     }
 }

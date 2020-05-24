@@ -63,7 +63,10 @@ public class DefaultTeam {
         ufs = new UFSet(allPoint);
         spanning = Kruskal.kruskal(allPoint, ufs, idents, dis, paths);
         System.out.printf("spanning.size=%d\n", spanning.size());
-        return edgesToTree(spanning, spanning.get(0).u);
+        Point racine;
+        if(spanning.size()==0) racine=hitPoints.get(0);
+        else racine= spanning.get(0).u;
+        return edgesToTree(spanning, racine);
     }
 
     private Tree2D edgesToTree(ArrayList<Edge> edges, Point root) {
@@ -95,6 +98,8 @@ public class DefaultTeam {
          * paths[u][v] est le point de successeur dans le plus court chemin de u à v.
          * idents stocke les identifiants de point. 
          */
+        Point s=hitPoints.get(0);
+        System.out.printf("SteinerBudget, s=(%.1f, %.1f)\n", s.getX(), s.getY());
         int[][] paths = new int[points.size()][points.size()];
         double[][] dis = new double[points.size()][points.size()];
         Floyd.floyd(paths, dis, points, edgeThreshold);
