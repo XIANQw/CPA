@@ -26,9 +26,11 @@ public class UFSet {
         }
     }
     /**
-     * La méthode find(Point p) permet de trouver à quelle partie le Point p appartient.
+     * La méthode permet de trouver à quelle partie le Point p appartient.
      * En cherchant la racine de point, le chemin est compressé, cela permet de améliorer
      * la complexité est O(logn) au pire, O(1) en moyenne.
+     * @param p: Le point dont on veut chercher la racine. 
+     * 
      */
 
     public int find(Point p) {
@@ -47,8 +49,10 @@ public class UFSet {
     }
 
     /**
-     * Union(Point p1, Point p2) permet de fusioner deux partie de ces deux points 
+     * Union permet de fusioner deux partie de ces deux points 
      * la complexité est O(logn) au pire, O(1) en moyenne.
+     * 
+     * @param pq: Deux points qu'on veut fusioner
      */
     public void union(Point p, Point q) {
         int rootp = find(p), rootq = find(q);

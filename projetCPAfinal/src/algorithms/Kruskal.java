@@ -3,9 +3,18 @@ package algorithms;
 import java.util.ArrayList;
 import java.awt.Point;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Comparator;
 
 public class Kruskal {
+    /**
+     * Cette méthode produit un arbre couvrant minimal de points.
+     * @param points: La liste des points composant une arbre couvrant minimal
+     * @param ufs: Union-Find-Set, pour vérifier si deux points sont dans la même partie.
+     * @param idents: Un hashmap gardant l'identifiant de point
+     * @param dis: Un tableau à 2 dimensions qui stocke la longueur de plus court chemin entre deux points
+     * @param paths: Un tableau à 2 dimensions qui garde le point de successeur dans le plus court chemin entre deux points.
+     */
     public static ArrayList<Edge> kruskal(ArrayList<Point> points, UFSet ufs, HashMap<Point, Integer> idents, double[][] dis,
             int[][] paths) {
         /**
@@ -48,22 +57,78 @@ public class Kruskal {
         }
         return span;
     }
+    /**
+     * deleteEdge supprimer les arêtes par l'algo glouton.
+     * On supprime les arêtes en ordre de longueur décroissant. 
+     * C'est pour obtenir plus de points possible et garde une longueur plus petite à la fois.
+     * 
+     * @param s: Le point de maison-mère
+     * @param B: Le budget de longeur
+     * @param spanningTree: La liste des arêtes de l'arbre couvrant
+     * @param idents: L'identifiant de Point
+     * @param dis: dis[u][v] est la plus petite distance entre Point u et Point v
+     * 
+     */
+    public static ArrayList<Edge> deleteEdge(Point s, ArrayList<Edge> spanningTree, int B, HashMap<Point, Integer> idents, double[][] dis){
+        double length=0;
+        HashMap<Point, Integer> count = new HashMap<Point, Integer>();
+        /**
+         * count est un compteur qui stocke le degré d'un point. 
+         * Si le degré de p == 1, cela veut dire que le point est l'extrêmité d'une seul arête.
+         * Si > 1, le point est l'extrếmité de plusieurs arêtes.
+         * Si 0, le point n'existe plus dans l'arbre.
+         */
+        for(Edge e:spanningTree){
+            length += dis[idents.get(e.u)][idents.get(e.v)];
+            if(count.containsKey(e.u)) count.put(e.u, count.get(e.u) + 1);
+            else count.put(e.u, 1);
+            if(count.containsKey(e.v)) count.put(e.v, count.get(e.v) + 1);
+            else count.put(e.v, 1);
+        }
+        ArrayList<Edge> res = new ArrayList<Edge>();
+        HashSet<Edge> deleted = new HashSet<Edge>();
 
-    public static ArrayList<Edge> kruskalBudget(ArrayList<Point> points, UFSet ufs, HashMap<Point, Integer> idents, double[][] dis,
-    int[][] paths, int budget) {
-        ArrayList<Edge> edges = new ArrayList<Edge>();
-        if(points.size()==0) return edges;
-        
-        Point s=points.get(0);
-        for(Point p:points){
-            for(Point q:points){
-                if(!p.equals(q)){
-                    edges.add(new Edge(p, q));
+        /**
+         * On cherche la plus longue arête d'extrếmité de l'arbre et la supprime depuis l'arbre.
+         * Cela permet de diminuer la longueur total de l'arbre mais ne perd pas trop de points.
+         */
+        while(length > B){
+            Edge toDel = null; double lenToDel=0;
+            for(Edge e: spanningTree){
+                // Si point s est l'extrêmité de l'arbre, on ne peut pas supprimer cette arête.
+                if((e.u.equals(s) || e.v.equals(s)) && count.get(s) == 1){
+                    continue;
+                }
+                
+                // Si l'arête a déjà été supprimer, on continue.
+                if(deleted.contains(e)) continue;
+
+                // Si l'arête est dans l'intérieux de l'arbre, on ne peut pas la supprimer non plus.
+                if(count.get(e.u) > 1 && count.get(e.v) > 1){
+                    continue;
+                }
+
+                // On supprimer la plus longue arête d'extrêmité de l'arbre.
+                double lenEdge = dis[idents.get(e.u)][idents.get(e.v)];
+                if(toDel == null || lenEdge > lenToDel){
+                    lenToDel = lenEdge;
+                    toDel = e;
                 }
             }
+            if(toDel == null) break;
+            length -= lenToDel;
+            deleted.add(toDel);
+            count.put(toDel.u, count.get(toDel.u) - 1);
+            count.put(toDel.v, count.get(toDel.v) - 1);
+            if(count.get(toDel.u) == 0) count.remove(toDel.u);
+            if(count.get(toDel.v) == 0) count.remove(toDel.v);
+        }
+        System.out.printf("length=%.1f\n", length);
+        for(Edge e:spanningTree){
+            if(deleted.contains(e)) continue;
+            res.add(e);
         }
 
-
-        return edges;
+        return res;
     }
 }

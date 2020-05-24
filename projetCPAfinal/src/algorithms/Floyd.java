@@ -7,9 +7,10 @@ public class Floyd {
 
     /**
      * L'algo floyd remplit le tableau distance et paths, la complexité est O(n3).
-     * dis[u][v] est la plus petite distance entre Point u et Point v
-     * paths[u][v] est le point de successeur dans le plus court chemin de u à v.
-     * idents stocke les identifiants de point. 
+     * @param paths: Un tableau à 2 dimensions qui garde le point de successeur dans le plus court chemin entre deux points.
+     * @param dis: Un tableau à 2 dimensions qui stocke la longueur de plus court chemin entre deux points
+     * @param points: La liste des points composant une arbre couvrant minimal
+     * @param edgeThreshold: Le seuil décidant s'il y a un lien entre deux points. 
      */
     public static void floyd(int[][] paths, double[][] dis, ArrayList<Point> points, int edgeThreshold) {
         for (int i = 0; i < paths.length; i++)
